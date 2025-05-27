@@ -95,8 +95,8 @@ export function ConversationHistory({
                         variant="secondary"
                         className={`text-xs ${getStatusColor(conversation.status)}`}
                       >
-                        {conversation.status === "learning" ? "Learning" : 
-                         conversation.status === "completed" ? "Completed" : "Active"}
+                        {conversation.status === "learning" ? "학습중" : 
+                         conversation.status === "completed" ? "완료됨" : "활성화"}
                       </Badge>
                     )}
                   </div>
@@ -113,14 +113,14 @@ export function ConversationHistory({
                       <div className="w-4 h-4 bg-green-500 rounded-full border border-white"></div>
                     </div>
                     <span className="text-xs text-gray-500">
-                      {conversation.totalExchanges} exchanges
+                      {conversation.totalExchanges}회 대화
                     </span>
                   </div>
                   
                   {currentConversationId === conversation.id && (
                     <Badge variant="default" className="text-xs">
                       <Clock className="w-3 h-3 mr-1" />
-                      Active
+                      활성화
                     </Badge>
                   )}
                 </div>
