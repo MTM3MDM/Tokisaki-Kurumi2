@@ -89,7 +89,10 @@ export class MemStorage implements IStorage {
     const now = new Date();
     const conversation: Conversation = {
       id: this.currentConversationId++,
-      ...insertConversation,
+      title: insertConversation.title,
+      totalExchanges: insertConversation.totalExchanges || 0,
+      accuracyImprovement: insertConversation.accuracyImprovement || 0,
+      status: insertConversation.status || "active",
       createdAt: now,
       updatedAt: now,
     };
@@ -119,7 +122,14 @@ export class MemStorage implements IStorage {
   async createMessage(insertMessage: InsertMessage): Promise<Message> {
     const message: Message = {
       id: this.currentMessageId++,
-      ...insertMessage,
+      conversationId: insertMessage.conversationId,
+      content: insertMessage.content,
+      translatedContent: insertMessage.translatedContent || null,
+      isUser: insertMessage.isUser,
+      language: insertMessage.language,
+      contextScore: insertMessage.contextScore || null,
+      feedbackScore: insertMessage.feedbackScore || null,
+      metadata: insertMessage.metadata || {},
       timestamp: new Date(),
     };
     this.messages.set(message.id, message);
@@ -160,7 +170,10 @@ export class MemStorage implements IStorage {
   async createFeedback(insertFeedback: InsertFeedback): Promise<FeedbackEntry> {
     const feedback: FeedbackEntry = {
       id: this.currentFeedbackId++,
-      ...insertFeedback,
+      messageId: insertFeedback.messageId,
+      feedbackType: insertFeedback.feedbackType,
+      category: insertFeedback.category || null,
+      suggestion: insertFeedback.suggestion || null,
       timestamp: new Date(),
       applied: false,
     };
