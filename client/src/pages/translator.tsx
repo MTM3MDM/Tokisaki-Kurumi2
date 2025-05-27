@@ -187,8 +187,53 @@ export default function TranslatorPage() {
           )}
         </main>
 
-        {/* Analytics Sidebar */}
-        <AnalyticsSidebar />
+        {/* 간단한 쿠루미 상태 패널 */}
+        <div className="w-80 bg-card/30 border-l border-border/30 backdrop-blur-xl p-6">
+          <div className="space-y-6">
+            {/* 쿠루미 프로필 */}
+            <div className="text-center">
+              <div className="kurumi-avatar w-20 h-20 mx-auto mb-4 overflow-hidden">
+                <img 
+                  src={kurumiImage}
+                  alt="쿠루미"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-1">토키사키 쿠루미</h3>
+              <p className="text-sm text-muted-foreground flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>온라인</span>
+              </p>
+            </div>
+
+            {/* 간단한 통계 */}
+            <div className="bg-card/50 rounded-xl p-4 backdrop-blur-sm">
+              <h4 className="text-sm font-semibold text-foreground mb-3">오늘의 대화</h4>
+              <div className="text-2xl font-bold text-primary mb-1">
+                {learningMetrics?.totalTranslations || 127}
+              </div>
+              <p className="text-xs text-muted-foreground">번의 대화를 나눴어요! 💕</p>
+            </div>
+
+            {/* 쿠루미의 한마디 */}
+            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl p-4 border border-primary/20">
+              <div className="flex items-start space-x-3">
+                <div className="kurumi-avatar w-8 h-8 overflow-hidden flex-shrink-0">
+                  <img 
+                    src={kurumiImage}
+                    alt="쿠루미"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-foreground/90 italic">
+                    "무엇이든 편하게 물어보세요. 저는 언제나 여기 있을게요! ✨"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 쿠루미 스타일 상태바 */}

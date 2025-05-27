@@ -19,9 +19,13 @@ import {
   Mic,
   Brain,
   CheckCircle,
-  Clock
+  Clock,
+  Heart,
+  Sparkles,
+  MessageCircle
 } from "lucide-react";
 import type { Message } from "@shared/schema";
+import kurumiImage from "@assets/Kurumi tokisaka.jpg";
 
 interface ChatInterfaceProps {
   conversationId: number;
@@ -146,32 +150,48 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
 
   return (
     <>
-      {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
+      {/* 쿠루미 채팅 헤더 */}
+      <div className="kurumi-card border-b border-border/30 p-6 backdrop-blur-xl">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">한국어 번역 어시스턴트</h2>
-            <p className="text-sm text-gray-600">적응형 학습 AI 기반</p>
+          <div className="flex items-center space-x-4">
+            <div className="kurumi-avatar w-10 h-10 overflow-hidden">
+              <img 
+                src={kurumiImage}
+                alt="쿠루미"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                쿠루미와의 대화
+              </h2>
+              <p className="text-sm text-muted-foreground flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>지금 온라인이에요! 무엇이든 물어보세요 💕</span>
+              </p>
+            </div>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <div className="flex bg-gray-100 rounded-lg p-1">
-              <Button
-                variant={currentLanguage === "ko" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentLanguage("ko")}
-                className="text-sm"
-              >
-                🇰🇷 한국어
-              </Button>
-              <Button
-                variant={currentLanguage === "en" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentLanguage("en")}
-                className="text-sm"
-              >
-                🇺🇸 영어
-              </Button>
+          <div className="flex items-center space-x-3">
+            <div className="bg-card/50 rounded-xl p-2 backdrop-blur-sm">
+              <div className="flex space-x-1">
+                <Button
+                  variant={currentLanguage === "ko" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setCurrentLanguage("ko")}
+                  className={`text-sm px-3 py-1.5 rounded-lg ${currentLanguage === "ko" ? "kurumi-button" : ""}`}
+                >
+                  🇰🇷 한국어
+                </Button>
+                <Button
+                  variant={currentLanguage === "en" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setCurrentLanguage("en")}
+                  className={`text-sm px-3 py-1.5 rounded-lg ${currentLanguage === "en" ? "kurumi-button" : ""}`}
+                >
+                  🇺🇸 English
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -180,83 +200,101 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message: Message) => (
-          <div key={message.id} className="flex items-start space-x-3">
-            <Avatar className="w-8 h-8">
-              <AvatarFallback>
-                {message.isUser ? (
-                  <User className="w-4 h-4" />
-                ) : (
-                  <Bot className="w-4 h-4 text-primary" />
-                )}
-              </AvatarFallback>
-            </Avatar>
+          <div key={message.id} className={`flex items-start space-x-4 ${message.isUser ? 'justify-end' : ''}`}>
+            {!message.isUser && (
+              <div className="kurumi-avatar w-8 h-8 overflow-hidden flex-shrink-0">
+                <img 
+                  src={kurumiImage}
+                  alt="쿠루미"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             
-            <div className="flex-1">
-              <Card className={message.isUser ? "bg-white" : "bg-blue-50 border-blue-200"}>
-                <CardContent className="p-4">
-                  <p className="text-gray-900 mb-2">{message.content}</p>
-                  
-                  {message.translatedContent && !message.isUser && (
-                    <div className="bg-white rounded p-2 text-sm text-gray-600 italic border-l-2 border-blue-400 mb-3">
-                      Original: "{message.content}"
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500 flex items-center space-x-2">
-                      <span>{formatTime(message.timestamp)}</span>
-                      {!message.isUser && (
-                        <>
-                          <span>•</span>
-                          <span className="flex items-center space-x-1 text-green-600">
-                            <CheckCircle className="w-3 h-3" />
-                            <span>맥락 인식</span>
-                          </span>
-                          {message.contextScore && (
-                            <>
-                              <span>•</span>
-                              <span>{Math.round(message.contextScore * 100)}% 신뢰도</span>
-                            </>
-                          )}
-                        </>
-                      )}
-                    </div>
-                    
+            <div className={`max-w-[70%] ${message.isUser ? 'order-first' : ''}`}>
+              <div className={`${message.isUser ? 'message-bubble-user ml-auto' : 'message-bubble-ai'} relative`}>
+                {!message.isUser && (
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-sm font-semibold text-primary-foreground">쿠루미</span>
+                    <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-white/20 text-white border-white/30">
+                      AI
+                    </Badge>
+                  </div>
+                )}
+                
+                <p className={`${message.isUser ? 'text-foreground' : 'text-primary-foreground'} mb-3 leading-relaxed`}>
+                  {message.content}
+                </p>
+                
+                {message.translatedContent && !message.isUser && (
+                  <div className="bg-white/10 rounded-lg p-3 text-sm text-white/90 italic border-l-4 border-white/30 mb-3 backdrop-blur-sm">
+                    <span className="text-white/70 text-xs block mb-1">번역된 내용:</span>
+                    "{message.translatedContent}"
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between">
+                  <div className={`text-xs flex items-center space-x-2 ${message.isUser ? 'text-muted-foreground' : 'text-white/70'}`}>
+                    <span>{formatTime(message.timestamp)}</span>
                     {!message.isUser && (
-                      <div className="flex space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleFeedback(message.id, "positive")}
-                          className="p-1 h-auto text-green-600 hover:bg-green-50"
-                          title="좋은 번역"
-                        >
-                          <ThumbsUp className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleFeedback(message.id, "negative")}
-                          className="p-1 h-auto text-red-600 hover:bg-red-50"
-                          title="개선 필요"
-                        >
-                          <ThumbsDown className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onFeedbackRequest(message.id)}
-                          className="p-1 h-auto text-gray-600 hover:bg-gray-50"
-                          title="개선 제안"
-                        >
-                          <Edit3 className="w-3 h-3" />
-                        </Button>
-                      </div>
+                      <>
+                        <span>•</span>
+                        <span className="flex items-center space-x-1">
+                          <Sparkles className="w-3 h-3" />
+                          <span>AI 응답</span>
+                        </span>
+                        {message.contextScore && (
+                          <>
+                            <span>•</span>
+                            <span>{Math.round(message.contextScore * 100)}% 신뢰도</span>
+                          </>
+                        )}
+                      </>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  {!message.isUser && (
+                    <div className="flex space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleFeedback(message.id, "positive")}
+                        className="p-1.5 h-auto text-white/80 hover:bg-white/20 rounded-lg"
+                        title="좋아요"
+                      >
+                        <Heart className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleFeedback(message.id, "negative")}
+                        className="p-1.5 h-auto text-white/80 hover:bg-white/20 rounded-lg"
+                        title="개선 필요"
+                      >
+                        <ThumbsDown className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onFeedbackRequest(message.id)}
+                        className="p-1.5 h-auto text-white/80 hover:bg-white/20 rounded-lg"
+                        title="피드백"
+                      >
+                        <Edit3 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+
+            {message.isUser && (
+              <Avatar className="w-8 h-8 flex-shrink-0">
+                <AvatarFallback className="bg-muted">
+                  <User className="w-4 h-4" />
+                </AvatarFallback>
+              </Avatar>
+            )}
           </div>
         ))}
 
@@ -304,39 +342,56 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="bg-white border-t border-gray-200 p-4">
-        <div className="flex items-end space-x-3">
+      {/* 쿠루미 스타일 입력 영역 */}
+      <div className="kurumi-card border-t border-border/30 p-6 backdrop-blur-xl">
+        <div className="flex items-end space-x-4">
           <div className="flex-1">
             <div className="relative">
               <Textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={`${currentLanguage === "ko" ? "한국어" : "영어"}로 메시지를 입력하세요...`}
-                className="pr-20 resize-none"
-                rows={2}
+                placeholder={`쿠루미에게 ${currentLanguage === "ko" ? "한국어" : "영어"}로 메시지를 보내보세요... 💕`}
+                className="bg-card/50 border-border/50 rounded-xl pr-20 resize-none backdrop-blur-sm focus:bg-card/80 transition-all duration-300 text-foreground placeholder:text-muted-foreground/70"
+                rows={3}
               />
               
-              <div className="absolute right-2 bottom-2 flex items-center space-x-1">
-                <Button variant="ghost" size="sm" className="p-1.5 h-auto text-gray-400 hover:text-gray-600">
+              <div className="absolute right-3 bottom-3 flex items-center space-x-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="p-2 h-auto text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
+                >
                   <Paperclip className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" className="p-1.5 h-auto text-gray-400 hover:text-gray-600">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="p-2 h-auto text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-200"
+                >
                   <Mic className="w-4 h-4" />
                 </Button>
               </div>
             </div>
             
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Badge variant="secondary" className="cursor-pointer hover:bg-gray-200">
-                문서 번역하기
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Badge 
+                variant="secondary" 
+                className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-all duration-200 bg-card/50 border-border/50 backdrop-blur-sm"
+              >
+                💬 자유롭게 대화하기
               </Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-gray-200">
-                맥락 정확도 확인
+              <Badge 
+                variant="secondary" 
+                className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-all duration-200 bg-card/50 border-border/50 backdrop-blur-sm"
+              >
+                🌍 번역 도움 요청
               </Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-gray-200">
-                번역 선택 설명
+              <Badge 
+                variant="secondary" 
+                className="cursor-pointer hover:bg-primary/20 hover:text-primary transition-all duration-200 bg-card/50 border-border/50 backdrop-blur-sm"
+              >
+                ❓ 질문하기
               </Badge>
             </div>
           </div>
@@ -344,17 +399,27 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
           <Button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || sendMessageMutation.isPending}
-            className="px-6 py-3"
+            className="kurumi-button h-12 px-6 flex items-center space-x-2"
           >
             {sendMessageMutation.isPending ? (
-              <Clock className="w-4 h-4 animate-spin" />
+              <>
+                <Clock className="w-4 h-4 animate-spin" />
+                <span>전송 중...</span>
+              </>
             ) : (
               <>
+                <Send className="w-4 h-4" />
                 <span>전송</span>
-                <Send className="w-4 h-4 ml-2" />
               </>
             )}
           </Button>
+        </div>
+        
+        <div className="mt-4 flex items-center justify-center">
+          <p className="text-xs text-muted-foreground/60 flex items-center space-x-2">
+            <Heart className="w-3 h-3 text-primary" />
+            <span>쿠루미가 정성껏 답변해드릴게요!</span>
+          </p>
         </div>
       </div>
     </>

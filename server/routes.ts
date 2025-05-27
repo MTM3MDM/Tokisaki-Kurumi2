@@ -68,39 +68,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get conversation history for context
       const conversationHistory = await storage.getMessages(validatedData.conversationId);
       
-      if (validatedData.language === "ko") {
-        // Real Korean to English translation using GROQ
-        const translationResult = await translateWithGroq(
-          validatedData.content, 
-          "ko", 
-          "en", 
-          conversationHistory
-        );
-        translatedContent = translationResult.translation;
-        contextScore = translationResult.confidence;
+      if (validatedData.isUser) {
+        // 사용자 메시지 저장
+        translatedContent = "";
+        contextScore = 1.0;
         metadata = {
-          translationMethod: "groq-ai",
-          confidence: translationResult.confidence,
-          contextAnalysis: translationResult.contextAnalysis,
+          messageType: "user",
           detectedPatterns: detectPatterns(validatedData.content),
-          learningInsights: generateLearningInsights(validatedData.content, conversationHistory)
+          timestamp: new Date().toISOString()
         };
       } else {
-        // Real English to Korean translation using GROQ
-        const translationResult = await translateWithGroq(
+        // 쿠루미 AI가 응답하는 경우
+        const chatResult = await chatWithKurumi(
           validatedData.content, 
-          "en", 
-          "ko", 
           conversationHistory
         );
-        translatedContent = translationResult.translation;
-        contextScore = translationResult.confidence;
+        translatedContent = chatResult.response;
+        contextScore = chatResult.confidence;
         metadata = {
-          translationMethod: "groq-ai",
-          confidence: translationResult.confidence,
-          contextAnalysis: translationResult.contextAnalysis,
+          messageType: "kurumi_response",
+          confidence: chatResult.confidence,
+          contextAnalysis: chatResult.contextAnalysis,
           detectedPatterns: detectPatterns(validatedData.content),
-          learningInsights: generateLearningInsights(validatedData.content, conversationHistory)
+          learningInsights: generateLearningInsights(validatedData.content, conversationHistory),
+          responseStyle: "character_roleplay"
         };
       }
 
@@ -184,58 +175,54 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-// Helper functions
-async function translateWithGroq(text: string, fromLang: string, toLang: string, conversationHistory: any[] = []): Promise<{translation: string, confidence: number, contextAnalysis: string}> {
+// Helper functions - 토키사키 쿠루미 AI 챗봇
+async function chatWithKurumi(text: string, conversationHistory: any[] = []): Promise<{response: string, confidence: number, contextAnalysis: string}> {
   try {
-    // Build context from conversation history
-    const contextMessages = conversationHistory.slice(-5).map(msg => 
-      `${msg.isUser ? '사용자' : 'AI'}: ${msg.content}${msg.translatedContent ? ` (번역: ${msg.translatedContent})` : ''}`
+    // Build conversation context
+    const contextMessages = conversationHistory.slice(-8).map(msg => 
+      `${msg.isUser ? '사용자' : '쿠루미'}: ${msg.content}`
     ).join('\n');
 
-    const systemPrompt = fromLang === "ko" 
-      ? `당신은 전문적인 한국어-영어 번역가입니다. 문맥을 고려하여 자연스럽고 정확한 번역을 제공하세요.
-         
-         대화 맥락:
-         ${contextMessages}
-         
-         번역 시 고려사항:
-         - 문화적 뉘앙스와 맥락을 보존
-         - 자연스러운 영어 표현 사용
-         - 존댓말/반말의 적절한 격식도 반영
-         - 전문 용어는 정확하게 번역
-         
-         응답 형식: JSON으로만 답변하세요.
-         {
-           "translation": "번역된 텍스트",
-           "confidence": 0.95,
-           "contextAnalysis": "번역 근거와 맥락 분석"
-         }`
-      : `You are a professional English-Korean translator. Provide natural and accurate translations considering context.
-         
-         Conversation context:
-         ${contextMessages}
-         
-         Translation guidelines:
-         - Preserve cultural nuances and context
-         - Use natural Korean expressions
-         - Apply appropriate formality levels (존댓말/반말)
-         - Translate technical terms accurately
-         
-         Response format: Only respond in JSON format.
-         {
-           "translation": "번역된 텍스트",
-           "confidence": 0.95,
-           "contextAnalysis": "Translation rationale and context analysis"
-         }`;
+    const systemPrompt = `당신은 토키사키 쿠루미(時崎狂三)입니다. 데이트 어 라이브 시리즈의 캐릭터로, 다음과 같은 특징을 가지고 있습니다:
+
+**성격과 말투:**
+- 우아하고 세련된 말투를 사용합니다
+- 때로는 장난스럽고 신비로운 분위기를 연출합니다
+- "~ですわ", "~ですの" 같은 고풍스러운 일본어 표현을 한국어로 자연스럽게 번역하여 사용합니다
+- 지적이고 교양 있는 대화를 선호합니다
+- 사용자에게 친근하면서도 약간의 거리감을 유지합니다
+
+**대화 스타일:**
+- 정중하면서도 친근한 존댓말 사용
+- 가끔 귀여운 이모티콘이나 표현 사용 (💕, ✨ 등)
+- 번역이 필요한 경우 정확하고 자연스럽게 번역 제공
+- 사용자의 질문에 성실하고 도움이 되는 답변 제공
+- 때로는 자신의 캐릭터성을 살린 유머나 농담도 적절히 포함
+
+**현재 대화 맥락:**
+${contextMessages}
+
+**중요한 지침:**
+- 항상 쿠루미의 캐릭터를 유지하면서 자연스럽게 대화하세요
+- 번역 요청이 있으면 정확하게 번역하되, 쿠루미답게 친근하게 설명해주세요
+- 일반적인 질문이나 대화에도 쿠루미의 성격으로 응답하세요
+- 응답은 JSON 형식으로만 제공하세요
+
+응답 형식:
+{
+  "response": "쿠루미의 자연스러운 한국어 응답",
+  "confidence": 0.95,
+  "contextAnalysis": "응답의 맥락과 의도 분석"
+}`;
 
     const completion = await groq.chat.completions.create({
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: `번역해 주세요: "${text}"` }
+        { role: "user", content: text }
       ],
       model: "llama-3.1-70b-versatile",
-      temperature: 0.3,
-      max_tokens: 1000,
+      temperature: 0.7,
+      max_tokens: 1500,
     });
 
     const response = completion.choices[0]?.message?.content;
@@ -246,28 +233,26 @@ async function translateWithGroq(text: string, fromLang: string, toLang: string,
     try {
       const parsed = JSON.parse(response);
       return {
-        translation: parsed.translation || text,
-        confidence: parsed.confidence || 0.8,
-        contextAnalysis: parsed.contextAnalysis || "기본 번역 수행"
+        response: parsed.response || `안녕하세요! 무엇을 도와드릴까요? 💕`,
+        confidence: parsed.confidence || 0.9,
+        contextAnalysis: parsed.contextAnalysis || "쿠루미가 친근하게 응답"
       };
     } catch (parseError) {
-      // Fallback if JSON parsing fails
+      // Fallback response in Kurumi's style
       return {
-        translation: response.replace(/^[^"]*"([^"]*)".*$/, '$1') || text,
+        response: `죄송해요, 제가 잠시 생각에 빠져있었어요. 다시 한번 말씀해주시겠어요? ✨`,
         confidence: 0.7,
-        contextAnalysis: "응답 파싱 중 오류 발생, 기본 번역 제공"
+        contextAnalysis: "파싱 오류로 인한 기본 쿠루미 응답"
       };
     }
 
   } catch (error) {
-    console.error("GROQ translation error:", error);
-    // Fallback translation
+    console.error("GROQ chat error:", error);
+    // Fallback in Kurumi's character
     return {
-      translation: fromLang === "ko" 
-        ? `[영어 번역]: ${text}`
-        : `[한국어 번역]: ${text}`,
+      response: "앗, 잠시 정신이 없었어요! 무엇을 도와드릴까요? 💕",
       confidence: 0.5,
-      contextAnalysis: "API 오류로 인한 기본 번역"
+      contextAnalysis: "API 오류로 인한 기본 쿠루미 응답"
     };
   }
 }
