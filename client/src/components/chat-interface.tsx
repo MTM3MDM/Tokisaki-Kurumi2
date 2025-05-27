@@ -149,8 +149,8 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Korean Translation Assistant</h2>
-            <p className="text-sm text-gray-600">Powered by adaptive learning AI</p>
+            <h2 className="text-lg font-semibold text-gray-900">한국어 번역 어시스턴트</h2>
+            <p className="text-sm text-gray-600">적응형 학습 AI 기반</p>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -161,7 +161,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                 onClick={() => setCurrentLanguage("ko")}
                 className="text-sm"
               >
-                🇰🇷 Korean
+                🇰🇷 한국어
               </Button>
               <Button
                 variant={currentLanguage === "en" ? "default" : "ghost"}
@@ -169,7 +169,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                 onClick={() => setCurrentLanguage("en")}
                 className="text-sm"
               >
-                🇺🇸 English
+                🇺🇸 영어
               </Button>
             </div>
           </div>
@@ -209,12 +209,12 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                           <span>•</span>
                           <span className="flex items-center space-x-1 text-green-600">
                             <CheckCircle className="w-3 h-3" />
-                            <span>Context-aware</span>
+                            <span>맥락 인식</span>
                           </span>
                           {message.contextScore && (
                             <>
                               <span>•</span>
-                              <span>{Math.round(message.contextScore * 100)}% confidence</span>
+                              <span>{Math.round(message.contextScore * 100)}% 신뢰도</span>
                             </>
                           )}
                         </>

@@ -35,7 +35,7 @@ export default function TranslatorPage() {
 
   const handleNewConversation = async () => {
     try {
-      const newConversation = await translatorApi.createConversation("New Translation Session");
+      const newConversation = await translatorApi.createConversation("새로운 번역 세션");
       setCurrentConversationId(newConversation.id);
       // Refetch conversations to update the list
       window.location.reload();
@@ -63,23 +63,23 @@ export default function TranslatorPage() {
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <Brain className="text-primary-foreground text-sm" />
                 </div>
-                <h1 className="text-xl font-semibold text-gray-900">Korean Translator AI</h1>
+                <h1 className="text-xl font-semibold text-gray-900">지능형 한국어 번역 AI</h1>
               </div>
               <Badge variant="outline" className="hidden sm:flex items-center space-x-2 bg-green-50 text-green-700 border-green-200">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>Learning Active</span>
+                <span>학습 활성화</span>
               </Badge>
             </div>
             
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <ChartLine className="w-4 h-4 text-primary" />
-                <span>{learningMetrics?.accuracyScore?.toFixed(1) || "94.2"}% Accuracy</span>
+                <span>{learningMetrics?.accuracyScore?.toFixed(1) || "94.2"}% 정확도</span>
               </div>
               
               <Button variant="outline" size="sm" className="hidden sm:flex items-center space-x-2">
                 <Settings className="w-4 h-4" />
-                <span>Settings</span>
+                <span>설정</span>
               </Button>
               
               <Button
@@ -119,9 +119,9 @@ export default function TranslatorPage() {
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">Welcome to Korean Translator AI</h2>
-                <p className="text-gray-600 mb-4">Start a new conversation to begin translating</p>
-                <Button onClick={handleNewConversation}>Start New Conversation</Button>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">지능형 한국어 번역 AI에 오신 것을 환영합니다</h2>
+                <p className="text-gray-600 mb-4">새로운 대화를 시작하여 번역을 시작하세요</p>
+                <Button onClick={handleNewConversation}>새 대화 시작</Button>
               </div>
             </div>
           )}
@@ -135,13 +135,13 @@ export default function TranslatorPage() {
       <footer className="bg-white border-t border-gray-200 px-4 py-2">
         <div className="flex justify-between items-center text-xs text-gray-500">
           <div className="flex items-center space-x-4">
-            <span>Server: Connected</span>
-            <span>Learning: Active</span>
-            <span>Last update: 2s ago</span>
+            <span>서버: 연결됨</span>
+            <span>학습: 활성화</span>
+            <span>마지막 업데이트: 방금 전</span>
           </div>
           <div className="flex items-center space-x-4">
-            <span>Avg response: 1.2s</span>
-            <span>Today: {learningMetrics?.totalTranslations || 47} translations</span>
+            <span>평균 응답: 1.2초</span>
+            <span>오늘: {learningMetrics?.totalTranslations || 47}개 번역</span>
           </div>
         </div>
       </footer>
