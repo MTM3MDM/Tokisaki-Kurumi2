@@ -78,19 +78,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: new Date().toISOString()
         };
       } else {
-        // 쿠루미 AI가 응답하는 경우
+        // 쿠루미 AI가 응답하는 경우 - 사용자 메시지를 받아서 쿠루미가 응답
+        const lastUserMessage = conversationHistory[conversationHistory.length - 1];
+        const userContent = lastUserMessage ? lastUserMessage.content : validatedData.content;
+        
         const chatResult = await chatWithKurumi(
-          validatedData.content, 
+          userContent, 
           conversationHistory
         );
-        translatedContent = chatResult.response;
+        
+        // 쿠루미의 응답을 메인 콘텐츠로 설정
+        validatedData.content = chatResult.response;
+        translatedContent = "";
         contextScore = chatResult.confidence;
         metadata = {
           messageType: "kurumi_response",
           confidence: chatResult.confidence,
           contextAnalysis: chatResult.contextAnalysis,
-          detectedPatterns: detectPatterns(validatedData.content),
-          learningInsights: generateLearningInsights(validatedData.content, conversationHistory),
+          detectedPatterns: detectPatterns(userContent),
+          learningInsights: generateLearningInsights(userContent, conversationHistory),
           responseStyle: "character_roleplay"
         };
       }
