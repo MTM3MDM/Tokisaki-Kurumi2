@@ -8,8 +8,9 @@ import { AnalyticsSidebar } from "@/components/analytics-sidebar";
 import { FeedbackModal } from "@/components/feedback-modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Settings, ChartLine, Menu } from "lucide-react";
+import { Brain, Settings, ChartLine, Menu, Heart, Clock, MessageCircle } from "lucide-react";
 import type { Conversation } from "@shared/schema";
+import kurumiImage from "@assets/Kurumi tokisaka.jpg";
 
 export default function TranslatorPage() {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
@@ -53,31 +54,45 @@ export default function TranslatorPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* 쿠루미 스타일 헤더 */}
+      <header className="kurumi-card border-b border-border/30 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <Brain className="text-primary-foreground text-sm" />
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-4">
+                <div className="kurumi-avatar w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={kurumiImage}
+                    alt="토키사키 쿠루미"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <h1 className="text-xl font-semibold text-gray-900">지능형 한국어 번역 AI</h1>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    토키사키 쿠루미
+                  </h1>
+                  <p className="text-sm text-muted-foreground">지능형 AI 어시스턴트</p>
+                </div>
               </div>
-              <Badge variant="outline" className="hidden sm:flex items-center space-x-2 bg-green-50 text-green-700 border-green-200">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>학습 활성화</span>
+              <Badge className="hidden sm:flex items-center space-x-2 bg-primary/10 text-primary border-primary/20 px-3 py-1">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <span className="font-medium">온라인 상태</span>
               </Badge>
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <ChartLine className="w-4 h-4 text-primary" />
-                <span>{learningMetrics?.accuracyScore?.toFixed(1) || "94.2"}% 정확도</span>
+              <div className="hidden md:flex items-center space-x-3 bg-card/50 rounded-xl px-4 py-2 backdrop-blur-sm">
+                <ChartLine className="w-5 h-5 text-primary" />
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-foreground">
+                    {learningMetrics?.accuracyScore?.toFixed(1) || "98.7"}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">정확도</div>
+                </div>
               </div>
               
-              <Button variant="outline" size="sm" className="hidden sm:flex items-center space-x-2">
+              <Button className="kurumi-button hidden sm:flex items-center space-x-2 h-11">
                 <Settings className="w-4 h-4" />
                 <span>설정</span>
               </Button>
@@ -85,10 +100,10 @@ export default function TranslatorPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="lg:hidden"
+                className="lg:hidden h-11 w-11 rounded-xl"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               >
-                <Menu className="w-4 h-4" />
+                <Menu className="w-5 h-5" />
               </Button>
             </div>
           </div>
@@ -116,12 +131,57 @@ export default function TranslatorPage() {
               onFeedbackRequest={openFeedbackModal}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <Brain className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">지능형 한국어 번역 AI에 오신 것을 환영합니다</h2>
-                <p className="text-gray-600 mb-4">새로운 대화를 시작하여 번역을 시작하세요</p>
-                <Button onClick={handleNewConversation}>새 대화 시작</Button>
+            <div className="flex-1 flex items-center justify-center p-8">
+              <div className="kurumi-card max-w-2xl w-full p-12 text-center">
+                <div className="relative mb-8">
+                  <div className="kurumi-avatar w-32 h-32 mx-auto mb-6 overflow-hidden">
+                    <img 
+                      src={kurumiImage}
+                      alt="토키사키 쿠루미"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center animate-pulse">
+                    <Heart className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                </div>
+                
+                <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  안녕하세요! 저는 쿠루미에요
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                  무엇이든 물어보세요. 번역, 대화, 질문... 모든 것을 도와드릴게요! ✨
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  <div className="bg-card/30 rounded-xl p-4 border border-border/30">
+                    <MessageCircle className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold text-foreground mb-1">자유로운 대화</h3>
+                    <p className="text-sm text-muted-foreground">일상 대화부터 전문적인 질문까지</p>
+                  </div>
+                  <div className="bg-card/30 rounded-xl p-4 border border-border/30">
+                    <Brain className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <p className="font-semibold text-foreground mb-1">똑똑한 번역</p>
+                    <p className="text-sm text-muted-foreground">맥락을 이해하는 정확한 번역</p>
+                  </div>
+                  <div className="bg-card/30 rounded-xl p-4 border border-border/30">
+                    <Clock className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <h3 className="font-semibold text-foreground mb-1">24시간 대기</h3>
+                    <p className="text-sm text-muted-foreground">언제든지 도움을 드릴게요</p>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleNewConversation}
+                  className="kurumi-button text-lg h-14 px-8"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  쿠루미와 대화하기
+                </Button>
+                
+                <p className="text-xs text-muted-foreground mt-6 opacity-70">
+                  저와 함께 즐거운 시간을 보내요! 💕
+                </p>
               </div>
             </div>
           )}
@@ -131,17 +191,27 @@ export default function TranslatorPage() {
         <AnalyticsSidebar />
       </div>
 
-      {/* Status Bar */}
-      <footer className="bg-white border-t border-gray-200 px-4 py-2">
-        <div className="flex justify-between items-center text-xs text-gray-500">
-          <div className="flex items-center space-x-4">
-            <span>서버: 연결됨</span>
-            <span>학습: 활성화</span>
-            <span>마지막 업데이트: 방금 전</span>
+      {/* 쿠루미 스타일 상태바 */}
+      <footer className="kurumi-card border-t border-border/30 px-6 py-3 backdrop-blur-xl">
+        <div className="flex justify-between items-center text-sm">
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-foreground font-medium">쿠루미 온라인</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Brain className="w-4 h-4 text-primary" />
+              <span className="text-muted-foreground">AI 학습 중</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <span>평균 응답: 1.2초</span>
-            <span>오늘: {learningMetrics?.totalTranslations || 47}개 번역</span>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="text-muted-foreground">응답속도: 0.8초</span>
+            </div>
+            <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
+              오늘 {learningMetrics?.totalTranslations || 127}번 대화
+            </div>
           </div>
         </div>
       </footer>

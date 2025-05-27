@@ -3,26 +3,34 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 20 14.3% 4.1%;
-  --muted: 60 4.8% 95.9%;
-  --muted-foreground: 25 5.3% 44.7%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 20 14.3% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 20 14.3% 4.1%;
-  --border: 20 5.9% 90%;
-  --input: 20 5.9% 90%;
-  --primary: 207 90% 54%; /* #2563EB - Blue primary color matching design */
-  --primary-foreground: 211 100% 99%;
-  --secondary: 60 4.8% 95.9%;
-  --secondary-foreground: 24 9.8% 10%;
-  --accent: 60 4.8% 95.9%;
-  --accent-foreground: 24 9.8% 10%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 60 9.1% 97.8%;
-  --ring: 207 90% 54%; /* Matching primary color */
-  --radius: 0.5rem;
+  /* 토키사키 쿠루미 테마 - 다크 고딕 컬러 */
+  --background: 240 10% 8%; /* 깊은 다크 네이비 */
+  --foreground: 0 0% 95%; /* 밝은 화이트 */
+  --muted: 240 8% 15%; /* 다크 그레이 */
+  --muted-foreground: 240 5% 65%; /* 중간 그레이 */
+  --popover: 240 10% 12%;
+  --popover-foreground: 0 0% 95%;
+  --card: 240 8% 10%; /* 카드 배경 */
+  --card-foreground: 0 0% 95%;
+  --border: 240 8% 20%; /* 테두리 */
+  --input: 240 8% 15%; /* 입력 필드 */
+  --primary: 350 85% 55%; /* 쿠루미 시그니처 레드 */
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 8% 18%; /* 다크 세컨더리 */
+  --secondary-foreground: 0 0% 90%;
+  --accent: 350 70% 45%; /* 액센트 레드 */
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 75% 55%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 350 85% 55%; /* 포커스 링 */
+  --radius: 0.75rem; /* 더 둥근 모서리 */
+  
+  /* 쿠루미 전용 커스텀 컬러 */
+  --kurumi-red: 350 85% 55%;
+  --kurumi-dark: 240 15% 8%;
+  --kurumi-accent: 45 90% 65%; /* 골드 액센트 */
+  --kurumi-purple: 280 60% 40%; /* 다크 퍼플 */
+  --kurumi-shadow: 240 50% 5%;
 }
 
 .dark {
@@ -55,7 +63,9 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, hsl(var(--kurumi-dark)) 0%, hsl(var(--background)) 100%);
+    min-height: 100vh;
   }
 
   /* Custom scrollbar for better UX */
@@ -120,39 +130,72 @@
 }
 
 @layer components {
-  /* Message bubble styles */
+  /* 쿠루미 테마 메시지 버블 */
   .message-bubble-user {
-    @apply bg-white border border-gray-200 rounded-lg p-4 shadow-sm;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    @apply border border-border rounded-xl p-4 shadow-lg backdrop-blur-sm;
+    box-shadow: 0 8px 32px hsla(var(--kurumi-shadow), 0.3);
   }
 
   .message-bubble-ai {
-    @apply bg-blue-50 border border-blue-200 rounded-lg p-4;
+    background: linear-gradient(135deg, hsl(var(--kurumi-red)) 0%, hsl(var(--accent)) 100%);
+    @apply border border-primary/20 rounded-xl p-4 shadow-lg backdrop-blur-sm;
+    box-shadow: 0 8px 32px hsla(var(--kurumi-red), 0.2);
   }
 
-  /* Learning progress indicators */
+  /* 쿠루미 스타일 프로그레스 바 */
   .progress-bar-accuracy {
-    @apply bg-green-500;
+    background: linear-gradient(90deg, hsl(var(--kurumi-accent)) 0%, hsl(var(--kurumi-red)) 100%);
   }
 
   .progress-bar-context {
-    @apply bg-blue-500;
+    background: linear-gradient(90deg, hsl(var(--kurumi-purple)) 0%, hsl(var(--primary)) 100%);
   }
 
   .progress-bar-learning {
-    @apply bg-purple-500;
+    background: linear-gradient(90deg, hsl(var(--accent)) 0%, hsl(var(--kurumi-accent)) 100%);
   }
 
-  /* Feedback button styles */
-  .feedback-button-positive {
-    @apply text-green-600 hover:bg-green-50 hover:text-green-700;
+  /* 쿠루미 테마 버튼 */
+  .kurumi-button {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    @apply border-none text-primary-foreground rounded-xl px-6 py-3 font-medium shadow-lg;
+    box-shadow: 0 4px 16px hsla(var(--kurumi-red), 0.3);
+    transition: all 0.3s ease;
   }
 
-  .feedback-button-negative {
-    @apply text-red-600 hover:bg-red-50 hover:text-red-700;
+  .kurumi-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px hsla(var(--kurumi-red), 0.4);
   }
 
-  .feedback-button-neutral {
-    @apply text-gray-600 hover:bg-gray-50 hover:text-gray-700;
+  /* 쿠루미 카드 스타일 */
+  .kurumi-card {
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+    @apply border border-border/50 rounded-2xl shadow-2xl backdrop-blur-md;
+    box-shadow: 0 16px 64px hsla(var(--kurumi-shadow), 0.4);
+  }
+
+  /* 쿠루미 아바타 스타일 */
+  .kurumi-avatar {
+    @apply relative rounded-full border-2 border-primary shadow-lg;
+    box-shadow: 0 0 20px hsla(var(--kurumi-red), 0.5);
+  }
+
+  .kurumi-avatar::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: conic-gradient(from 0deg, hsl(var(--kurumi-red)), hsl(var(--kurumi-accent)), hsl(var(--kurumi-red)));
+    z-index: -1;
+    animation: rotate 3s linear infinite;
+  }
+
+  @keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 
