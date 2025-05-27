@@ -17,17 +17,17 @@ export function ConversationHistory({
   onSelectConversation,
   onNewConversation,
 }: ConversationHistoryProps) {
-  const formatDate = (date: string) => {
+  const formatDate = (date: string | Date) => {
     const now = new Date();
-    const conversationDate = new Date(date);
+    const conversationDate = typeof date === 'string' ? new Date(date) : date;
     const diffInDays = Math.floor((now.getTime() - conversationDate.getTime()) / (1000 * 60 * 60 * 24));
     
     if (diffInDays === 0) {
-      return `Today, ${conversationDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+      return `오늘, ${conversationDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
     } else if (diffInDays === 1) {
-      return `Yesterday, ${conversationDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+      return `어제, ${conversationDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
     } else {
-      return `${diffInDays} days ago, ${conversationDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+      return `${diffInDays}일 전, ${conversationDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
     }
   };
 
@@ -51,10 +51,10 @@ export function ConversationHistory({
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Conversation History</h2>
+        <h2 className="text-lg font-semibold text-gray-900">대화 기록</h2>
         <Button size="sm" onClick={onNewConversation} className="shrink-0">
           <Plus className="w-4 h-4 mr-1" />
-          New
+          새 대화
         </Button>
       </div>
       
@@ -63,8 +63,8 @@ export function ConversationHistory({
           {conversations.length === 0 ? (
             <div className="text-center py-8">
               <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600 text-sm">No conversations yet</p>
-              <p className="text-gray-500 text-xs">Start a new conversation to begin</p>
+              <p className="text-gray-600 text-sm">아직 대화가 없습니다</p>
+              <p className="text-gray-500 text-xs">새 대화를 시작해보세요</p>
             </div>
           ) : (
             conversations.map((conversation) => (
@@ -88,7 +88,7 @@ export function ConversationHistory({
                         className={`text-xs ${getAccuracyBadgeColor(conversation.accuracyImprovement)}`}
                       >
                         <TrendingUp className="w-3 h-3 mr-1" />
-                        +{conversation.accuracyImprovement.toFixed(1)}% accuracy
+                        +{conversation.accuracyImprovement.toFixed(1)}% 정확도
                       </Badge>
                     ) : (
                       <Badge

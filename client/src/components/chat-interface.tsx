@@ -128,8 +128,9 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
     feedbackMutation.mutate({ messageId, type });
   };
 
-  const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const formatTime = (timestamp: string | Date) => {
+    const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   if (isLoading) {
@@ -228,7 +229,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                           size="sm"
                           onClick={() => handleFeedback(message.id, "positive")}
                           className="p-1 h-auto text-green-600 hover:bg-green-50"
-                          title="Good translation"
+                          title="좋은 번역"
                         >
                           <ThumbsUp className="w-3 h-3" />
                         </Button>
@@ -237,7 +238,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                           size="sm"
                           onClick={() => handleFeedback(message.id, "negative")}
                           className="p-1 h-auto text-red-600 hover:bg-red-50"
-                          title="Needs improvement"
+                          title="개선 필요"
                         >
                           <ThumbsDown className="w-3 h-3" />
                         </Button>
@@ -246,7 +247,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                           size="sm"
                           onClick={() => onFeedbackRequest(message.id)}
                           className="p-1 h-auto text-gray-600 hover:bg-gray-50"
-                          title="Suggest improvement"
+                          title="개선 제안"
                         >
                           <Edit3 className="w-3 h-3" />
                         </Button>
@@ -273,14 +274,14 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                 <CardContent className="p-4">
                   <div className="mb-3">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-gray-900">Translating message...</span>
-                      <span className="text-sm text-gray-600">Processing</span>
+                      <span className="text-sm font-medium text-gray-900">메시지 번역 중...</span>
+                      <span className="text-sm text-gray-600">처리 중</span>
                     </div>
                     <Progress value={75} className="h-2" />
                     <div className="mt-2 text-xs text-gray-600">
                       <div className="flex justify-between">
-                        <span>Analyzing context and patterns</span>
-                        <span>ETA: 2 seconds</span>
+                        <span>맥락과 패턴 분석 중</span>
+                        <span>예상 시간: 2초</span>
                       </div>
                     </div>
                   </div>
@@ -288,10 +289,10 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                   <div className="bg-white rounded p-3 border-l-4 border-green-400">
                     <div className="flex items-center space-x-2 mb-2">
                       <Brain className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-800">Learning in Progress</span>
+                      <span className="text-sm font-medium text-green-800">학습 진행 중</span>
                     </div>
                     <p className="text-xs text-green-700">
-                      Adapting to conversation patterns. Accuracy improved by 0.3% during this session.
+                      대화 패턴에 적응 중입니다. 이번 세션에서 정확도가 0.3% 향상되었습니다.
                     </p>
                   </div>
                 </CardContent>
@@ -312,7 +313,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={`Type your message in ${currentLanguage === "ko" ? "Korean" : "English"}...`}
+                placeholder={`${currentLanguage === "ko" ? "한국어" : "영어"}로 메시지를 입력하세요...`}
                 className="pr-20 resize-none"
                 rows={2}
               />
@@ -329,13 +330,13 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
             
             <div className="mt-2 flex flex-wrap gap-2">
               <Badge variant="secondary" className="cursor-pointer hover:bg-gray-200">
-                Translate this document
+                문서 번역하기
               </Badge>
               <Badge variant="secondary" className="cursor-pointer hover:bg-gray-200">
-                Check context accuracy
+                맥락 정확도 확인
               </Badge>
               <Badge variant="secondary" className="cursor-pointer hover:bg-gray-200">
-                Explain translation choices
+                번역 선택 설명
               </Badge>
             </div>
           </div>
@@ -349,7 +350,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
               <Clock className="w-4 h-4 animate-spin" />
             ) : (
               <>
-                <span>Send</span>
+                <span>전송</span>
                 <Send className="w-4 h-4 ml-2" />
               </>
             )}
