@@ -112,15 +112,63 @@ export default function TranslatorPage() {
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Conversation History Sidebar */}
-        <aside className={`${isSidebarOpen ? "flex" : "hidden"} lg:flex lg:flex-col lg:w-80 bg-white border-r border-gray-200`}>
-          <ConversationHistory
-            conversations={conversations}
-            currentConversationId={currentConversationId}
-            onSelectConversation={setCurrentConversationId}
-            onNewConversation={handleNewConversation}
-          />
-          <LearningProgress />
+        {/* 쿠루미 스타일 사이드바 */}
+        <aside className={`${isSidebarOpen ? "flex" : "hidden"} lg:flex lg:flex-col lg:w-80 bg-card/20 border-r border-border/30 backdrop-blur-xl`}>
+          {/* 대화 기록 헤더 */}
+          <div className="p-6 border-b border-border/30">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-foreground">대화 기록</h2>
+              <Button 
+                onClick={handleNewConversation}
+                className="kurumi-button h-8 px-3 text-sm"
+              >
+                + 새 대화
+              </Button>
+            </div>
+          </div>
+
+          {/* 대화 목록 */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {conversations && conversations.length > 0 ? (
+              <div className="space-y-2">
+                {conversations.map((conversation) => (
+                  <div
+                    key={conversation.id}
+                    onClick={() => setCurrentConversationId(conversation.id)}
+                    className={`p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                      currentConversationId === conversation.id
+                        ? 'bg-primary/20 border-primary/30 border'
+                        : 'bg-card/30 hover:bg-card/50 border border-border/20'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="kurumi-avatar w-8 h-8 overflow-hidden flex-shrink-0">
+                        <img 
+                          src={kurumiImage}
+                          alt="쿠루미"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-foreground truncate">
+                          {conversation.title || "쿠루미와의 대화"}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(conversation.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <MessageCircle className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">아직 대화가 없습니다</p>
+                <p className="text-xs text-muted-foreground/70">새 대화를 시작해보세요!</p>
+              </div>
+            )}
+          </div>
         </aside>
 
         {/* Chat Interface */}
