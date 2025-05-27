@@ -47,48 +47,39 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: ({ content, language }: { content: string; language: string }) =>
-      translatorApi.sendMessage(conversationId, content, language, true),
-    onSuccess: async (userMessage) => {
-      // Invalidate messages to show the user message
-      queryClient.invalidateQueries({ queryKey: ["/api/conversations", conversationId, "messages"] });
-      
-      // Start translation simulation
-      setIsTranslating(true);
-      
-      // Simulate AI response delay
-      setTimeout(async () => {
-        try {
-          // Create AI response message
-          const aiResponse = await translatorApi.sendMessage(
-            conversationId,
-            userMessage.translatedContent || "Translation in progress...",
-            currentLanguage === "ko" ? "en" : "ko",
-            false
-          );
-          
-          setIsTranslating(false);
-          queryClient.invalidateQueries({ queryKey: ["/api/conversations", conversationId, "messages"] });
-          queryClient.invalidateQueries({ queryKey: ["/api/learning-metrics"] });
-          
-          toast({
-            title: "Translation completed",
-            description: "AI has processed your message with context awareness.",
-          });
-        } catch (error) {
-          setIsTranslating(false);
-          toast({
-            title: "Translation failed",
-            description: "Failed to generate AI response. Please try again.",
-            variant: "destructive",
-          });
-        }
-      }, 2000);
+    mutationFn: async (content: string) => {
+      // 사용자 메시지 저장
+      const userMessage = await translatorApi.sendMessage(
+        conversationId,
+        content,
+        currentLanguage,
+        true
+      );
+
+      // 쿠루미 AI 응답 생성
+      const aiResponse = await translatorApi.sendMessage(
+        conversationId,
+        content, // 사용자 메시지를 기반으로 쿠루미가 응답
+        currentLanguage,
+        false
+      );
+
+      return { userMessage, aiResponse };
     },
-    onError: () => {
+    onSuccess: () => {
+      setInputMessage("");
+      queryClient.invalidateQueries({ queryKey: ['/api/messages', conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/learning-metrics'] });
+      
       toast({
-        title: "Failed to send message",
-        description: "Please try again.",
+        title: "쿠루미가 응답했어요! 💕",
+        description: "쿠루미가 정성껏 답변해드렸어요!",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "메시지 전송 실패",
+        description: "쿠루미가 잠시 바쁜 것 같아요. 다시 시도해 주세요! 💕",
         variant: "destructive",
       });
     },
@@ -113,12 +104,7 @@ export function ChatInterface({ conversationId, onFeedbackRequest }: ChatInterfa
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
 
-    sendMessageMutation.mutate({
-      content: inputMessage,
-      language: currentLanguage,
-    });
-
-    setInputMessage("");
+    sendMessageMutation.mutate(inputMessage);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
